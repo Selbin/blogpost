@@ -1,17 +1,27 @@
-# Use the latest Node.js LTS version
-FROM node:lts-alpine
+# Use an official Node.js runtime as the parent image
+FROM node:18.15.0
 
-WORKDIR /usr/src/app
+# Set the working directory in the container to /app
+WORKDIR /app
 
-COPY package*.json ./
+# Copy the package.json and package-lock.json files to the container
+COPY package.json ./
 
+# Install the app dependencies
 RUN npm install
 
-# Copy the rest of the application code into the working directory
+# Copy the rest of the app's source code from your host to your image filesystem
 COPY . .
 
-# Compile the TypeScript code
-RUN npx tsc
+# Compile TypeScript to JavaScript
+RUN npm run build
 
-# Set the command to run when the container starts
-CMD [ "npm", "./dist/server.js" ]
+# Set environment variables
+ARG NODE_ENV
+ENV NODE_ENV $NODE_ENV
+
+# Make port 3000 available outside of the container
+EXPOSE 8000
+
+# Start the app
+CMD ["npm", "start"]
