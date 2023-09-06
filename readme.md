@@ -41,6 +41,7 @@ npm start
 To run tests, use the following command:
 
 ```
+npm run build
 npm test
 ```
 
