@@ -41,8 +41,9 @@ app.use((req: Request, res: Response): void => {
 // Configure error handling middleware
 app.use(errorHandler);
 
-app.listen(port, () => {
-    logger.info(`Server is running at http://localhost:${port}`);
-});
-
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+        logger.info(`Server is running at http://localhost:${port}`);
+    });
+}
 export default app;

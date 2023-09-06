@@ -18,7 +18,8 @@ const getAllBlogPosts = async (req: Request, res: Response, next: NextFunction):
         const posts = await BlogPost.find()
             .sort({ title: 1 })
             .skip((page - 1) * pageSize)
-            .limit(pageSize);
+            .limit(pageSize)
+            .populate('author');
         res.status(200).json(posts);
     } catch (error) {
         next(error);
@@ -28,7 +29,7 @@ const getAllBlogPosts = async (req: Request, res: Response, next: NextFunction):
 const getBlogPostById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const id = req.params.id;
-        const posts = await BlogPost.findById(id);
+        const posts = await BlogPost.findById(id).populate('author');
         res.status(200).json(posts);
     } catch (error) {
         next(error);
