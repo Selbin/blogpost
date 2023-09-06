@@ -64,6 +64,14 @@ describe('Posts API', () => {
                 createdPostID = createResponse.body._id;
                 expect(createResponse.body).toMatchObject(newPost);
             });
+
+            test('should return an error when creating a post with missing data', async () => {
+                const newPost = {}; // Missing required fields
+                const createResponse = await agent.post('/api/posts').set('Authorization', `Bearer ${token}`).send(newPost);
+
+                expect(createResponse.statusCode).toEqual(422);
+                expect(createResponse.body).toHaveProperty('error');
+            });
         });
 
         describe('PUT /api/posts/:id', () => {
@@ -77,6 +85,15 @@ describe('Posts API', () => {
                     title: 'edited'
                 });
             });
+
+            test('should return an error when updating a non-existent post', async () => {
+                const updatedPost = { title: 'edited' };
+                const nonExistentPostID = 'nonexistentpostid';
+                const updateResponse = await agent.put(`/api/posts/${nonExistentPostID}`).set('Authorization', `Bearer ${token}`).send(updatedPost);
+
+                expect(updateResponse.statusCode).toEqual(422);
+                expect(updateResponse.body).toHaveProperty('error');
+            });
         });
 
         describe('DELETE /api/posts/:id', () => {
@@ -85,6 +102,14 @@ describe('Posts API', () => {
 
                 expect(deleteResponse.statusCode).toEqual(200);
                 expect(deleteResponse.body).toEqual({ message: 'Blog post deleted' });
+            });
+
+            test('should return an error when deleting a non-existent post', async () => {
+                const nonExistentPostID = 'nonexistentpostid';
+                const deleteResponse = await agent.delete(`/api/posts/${nonExistentPostID}`).set('Authorization', `Bearer ${token}`);
+
+                expect(deleteResponse.statusCode).toEqual(422);
+                expect(deleteResponse.body).toHaveProperty('error');
             });
         });
     });
