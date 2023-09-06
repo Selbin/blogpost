@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import logger from '../logger/logger';
 
 export default (err: any, req: Request, res: Response, next: NextFunction) => {
-    logger.error(err);
+    logger.error(err.message);
     if (err.name === 'ValidationError') {
         return res.status(422).json({
             error: err.message
@@ -12,6 +12,8 @@ export default (err: any, req: Request, res: Response, next: NextFunction) => {
         return res.status(422).json({
             error: err.message
         });
+    } else if (err.message === 'Invalid email or password') {
+        res.status(401).json({ error: err.message });
     } else {
         res.status(500).json({ error: 'Internal Server Error' });
     }
